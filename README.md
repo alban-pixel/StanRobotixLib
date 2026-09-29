@@ -18,6 +18,11 @@ curl -sSL https://raw.githubusercontent.com/alban-pixel/StanRobotixLib/main/setu
 irm https://raw.githubusercontent.com/alban-pixel/StanRobotixLib/main/setup.ps1 | iex
 ```
 
+### Windows (Invite de commandes CMD)
+```cmd
+curl -sSL https://raw.githubusercontent.com/alban-pixel/StanRobotixLib/main/setup.bat -o setup.bat && setup.bat && del setup.bat
+```
+
 Cette commande télécharge le fichier `StanRobotixLib.json` dans votre dossier `vendordeps/` et installe les en-têtes C++ dans le cache WPILib pour une utilisation immédiate, même hors-ligne.
 
 ---
@@ -124,7 +129,7 @@ driver.bindPress(driver.B(), shooter.spinVelocity(80_tps));
 
 ## Tests Unitaires
 
-StanRobotixLib comprend une suite exhaustive de **245 tests unitaires** vérifiant le filtrage des deadbands, les conversions d'unités, la cinématique, les réjections de vision MegaTag2, les calculs de feedforward ainsi que la compilation et l'exécution de tous les exemples :
+StanRobotixLib comprend une suite exhaustive de **243 tests unitaires** vérifiant le filtrage des deadbands, les conversions d'unités, la cinématique, les réjections de vision MegaTag2, les calculs de feedforward ainsi que la compilation et l'exécution de tous les sous-systèmes d'exemples :
 
 ```bash
 # macOS / Linux
@@ -136,20 +141,18 @@ gradlew.bat test
 
 ---
 
-## Dossier d'Exemples Complets
+## Exemples de Sous-Systèmes (`.hpp` / `.cpp`)
 
-Le dossier [`examples/`](examples/) contient 8 architectures de code complètes, prêtes à l'emploi et testées pour vos sous-systèmes :
+Le dossier [`examples/`](examples/) contient des sous-systèmes modulaires au format standard `.hpp` / `.cpp`, prêts à être copiés dans votre robot :
 
-| Exemple | Fichier | Description |
-|---|---|---|
-| **01** | [`01_MotorAndSyncExample.h`](examples/01_MotorAndSyncExample.h) | Contrôle direct de moteur et synchronisation absolue Kraken/CANcoder en 1 ligne. |
-| **02** | [`02_RollerAndShooterExample.h`](examples/02_RollerAndShooterExample.h) | Intake et volant d'inertie asservi à 1 kHz avec tir conditionnel automatique (`atDesiredVelocity`). |
-| **03** | [`03_PivotArmExample.h`](examples/03_PivotArmExample.h) | Bras angulaire avec soft limits, synchronisation d'encodeur absolu et feedforward de gravité $\cos(\theta)$. |
-| **04** | [`04_ElevatorExample.h`](examples/04_ElevatorExample.h) | Ascenseur vertical avec soft limits, contrôle métrique et compensation statique de gravité. |
-| **05** | [`05_SwerveDrivetrainExample.h`](examples/05_SwerveDrivetrainExample.h) | Châssis swerve 4 modules configuré avec `StanSwerveBuilder`, odométrie, vision et verrouillage défensif en X. |
-| **06** | [`06_CarDriveExample.h`](examples/06_CarDriveExample.h) | Châssis directionnel type voiture (2 roues directrices avant + différentiel arrière, Mid-Robot). |
-| **07** | [`07_TunablePIDExample.h`](examples/07_TunablePIDExample.h) | Live-tuning dynamique des gains PID et feedforward via NetworkTables 4 sans redéploiement. |
-| **08** | [`08_FullRobotContainerExample.h`](examples/08_FullRobotContainerExample.h) | Orchestration complète d'un `RobotContainer` (manette Xbox, swerve, mécanismes et séquence autonome). |
+| Exemple | Dossier | Mécanisme | Fichiers |
+|---|---|---|---|
+| **01** | [`01_roller_intake/`](examples/01_roller_intake/) | Intake / Rouleaux convoyeur | `SubIntake.hpp` / `SubIntake.cpp` |
+| **02** | [`02_flywheel_shooter/`](examples/02_flywheel_shooter/) | Lanceur asservi en vitesse à 1 kHz | `SubShooter.hpp` / `SubShooter.cpp` |
+| **03** | [`03_pivot_arm/`](examples/03_pivot_arm/) | Bras articulé angulaire avec CANcoder | `SubPivotArm.hpp` / `SubPivotArm.cpp` |
+| **04** | [`04_elevator/`](examples/04_elevator/) | Ascenseur vertical linéaire métrique | `SubElevator.hpp` / `SubElevator.cpp` |
+| **05** | [`05_swerve_drive/`](examples/05_swerve_drive/) | Propulsion swerve 4 modules & X-lock | `SubDrivetrain.hpp` / `SubDrivetrain.cpp` |
+| **06** | [`06_robot_container/`](examples/06_robot_container/) | Orchestration robot & liaisons manette | `RobotContainer.hpp` / `RobotContainer.cpp` |
 
 ---
 

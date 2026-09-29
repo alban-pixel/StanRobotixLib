@@ -12,6 +12,7 @@ model {
             sources.cpp {
                 source {
                     srcDir 'src/test/cpp'
+                    srcDir 'examples'
                     include '**/*.cpp'
                 }
                 exportedHeaders {
