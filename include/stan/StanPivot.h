@@ -3,19 +3,18 @@
 #include <algorithm>
 #include <cmath>
 #include <string_view>
-#include <ctre/phoenix6/CANcoder.hpp>
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/Commands.h>
 #include <frc2/command/SubsystemBase.h>
 #include <units/angle.h>
 #include <units/math.h>
-#include "KrakenSync.h"
 #include "StanMotor.h"
 
 namespace stan {
 
 struct PivotConfig {
+  units::angle::degree_t kStartingAngle{0_deg};
   units::angle::degree_t kMinAngle{0_deg};
   units::angle::degree_t kMaxAngle{120_deg};
   units::angle::degree_t kTolerance{1.0_deg};
@@ -31,28 +30,29 @@ struct PivotConfig {
 
 class StanPivot : public frc2::SubsystemBase {
  public:
-  StanPivot(StanMotor* iMotor, ctre::phoenix6::hardware::CANcoder* iEncoder, const PivotConfig& iConfig)
-      : mMotor{iMotor}, mEncoder{iEncoder}, mOwnsMotor{false}, mOwnsEncoder{false}, mConfig{iConfig} {
+  StanPivot(StanMotor* iMotor, const PivotConfig& iConfig)
+      : mMotor{iMotor}, mOwnsMotor{false}, mConfig{iConfig} {
     configureMotor();
-    syncToAbsoluteEncoder();
+    resetPosition(mConfig.kStartingAngle);
   }
 
-  StanPivot(int iCanId, MotorType iType, int iEncoderId, const PivotConfig& iConfig, std::string_view iCanBus = "rio")
+  StanPivot(StanMotor& iMotor, const PivotConfig& iConfig)
+      : mMotor{&iMotor}, mOwnsMotor{false}, mConfig{iConfig} {
+    configureMotor();
+    resetPosition(mConfig.kStartingAngle);
+  }
+
+  StanPivot(int iCanId, MotorType iType, const PivotConfig& iConfig, std::string_view iCanBus = "rio")
       : mMotor{new StanMotor{iCanId, iType, iCanBus}},
-        mEncoder{new ctre::phoenix6::hardware::CANcoder{iEncoderId, iCanBus}},
         mOwnsMotor{true},
-        mOwnsEncoder{true},
         mConfig{iConfig} {
     configureMotor();
-    syncToAbsoluteEncoder();
+    resetPosition(mConfig.kStartingAngle);
   }
 
   ~StanPivot() override {
     if (mOwnsMotor) {
       delete mMotor;
-    }
-    if (mOwnsEncoder) {
-      delete mEncoder;
     }
   }
 
@@ -82,29 +82,24 @@ class StanPivot : public frc2::SubsystemBase {
     mConfig.kTolerance = iTolerance;
   }
 
-  void syncToAbsoluteEncoder() {
-    if (mEncoder != nullptr) {
-      if (auto* talon = mMotor->getTalonFX()) {
-        KrakenSync::sync(talon, mEncoder, 250_ms);
-      }
-#if STAN_HAS_REV
-      else if (auto* encoder = mMotor->getSparkRelativeEncoder()) {
-        auto& posSignal = mEncoder->GetPosition();
-        posSignal.WaitForUpdate(250_ms);
-        if (posSignal.GetStatus().IsOK()) {
-          encoder->SetPosition(posSignal.GetValue().value());
-        }
-      }
-#endif
+  void resetPosition(units::angle::degree_t iAngle = 0_deg) {
+    if (auto* talon = mMotor->getTalonFX()) {
+      talon->SetPosition(units::angle::turn_t{iAngle});
     }
+#if STAN_HAS_REV
+    else if (auto* encoder = mMotor->getSparkRelativeEncoder()) {
+      encoder->SetPosition(units::angle::turn_t{iAngle}.value());
+    }
+#endif
+    mTargetAngle = iAngle;
+  }
+
+  void zeroPosition() {
+    resetPosition(0_deg);
   }
 
   StanMotor* getMotor() {
     return mMotor;
-  }
-
-  ctre::phoenix6::hardware::CANcoder* getEncoder() {
-    return mEncoder;
   }
 
   frc2::CommandPtr goToAngle(units::angle::degree_t iAngle) {
@@ -115,8 +110,8 @@ class StanPivot : public frc2::SubsystemBase {
     return Run([this] { setTargetAngle(mTargetAngle); });
   }
 
-  frc2::CommandPtr syncEncoderCommand() {
-    return RunOnce([this] { syncToAbsoluteEncoder(); });
+  frc2::CommandPtr zeroPositionCommand(units::angle::degree_t iAngle = 0_deg) {
+    return RunOnce([this, iAngle] { resetPosition(iAngle); });
   }
 
   void Periodic() override {
@@ -151,6 +146,8 @@ class StanPivot : public frc2::SubsystemBase {
 #if STAN_HAS_REV
     else if (auto* spark = mMotor->getSparkMax()) {
       rev::spark::SparkMaxConfig config{};
+      config.encoder.PositionConversionFactor(1.0 / mConfig.kGearRatio);
+      config.encoder.VelocityConversionFactor(1.0 / mConfig.kGearRatio);
       config.closedLoop.Pid(mConfig.kP, mConfig.kI, mConfig.kD);
       config.closedLoop.feedForward.kS(mConfig.kS).kV(mConfig.kV).kCos(mConfig.kG);
       config.softLimit.ForwardSoftLimit(units::angle::turn_t{mConfig.kMaxAngle}.value())
@@ -163,6 +160,8 @@ class StanPivot : public frc2::SubsystemBase {
                        rev::PersistMode::kPersistParameters);
     } else if (auto* sparkFlex = mMotor->getSparkFlex()) {
       rev::spark::SparkFlexConfig config{};
+      config.encoder.PositionConversionFactor(1.0 / mConfig.kGearRatio);
+      config.encoder.VelocityConversionFactor(1.0 / mConfig.kGearRatio);
       config.closedLoop.Pid(mConfig.kP, mConfig.kI, mConfig.kD);
       config.closedLoop.feedForward.kS(mConfig.kS).kV(mConfig.kV).kCos(mConfig.kG);
       config.softLimit.ForwardSoftLimit(units::angle::turn_t{mConfig.kMaxAngle}.value())
@@ -178,9 +177,7 @@ class StanPivot : public frc2::SubsystemBase {
   }
 
   StanMotor* mMotor{nullptr};
-  ctre::phoenix6::hardware::CANcoder* mEncoder{nullptr};
   bool mOwnsMotor{false};
-  bool mOwnsEncoder{false};
   PivotConfig mConfig;
   units::angle::degree_t mTargetAngle{0_deg};
 };

@@ -14,6 +14,7 @@
 namespace stan {
 
 struct ElevatorConfig {
+  units::length::meter_t kStartingHeight{0.0_m};
   units::length::meter_t kMinHeight{0.0_m};
   units::length::meter_t kMaxHeight{1.5_m};
   units::length::meter_t kTolerance{0.01_m};
@@ -31,11 +32,19 @@ class StanElevator : public frc2::SubsystemBase {
   StanElevator(StanMotor* iMotor, const ElevatorConfig& iConfig)
       : mMotor{iMotor}, mOwnsMotor{false}, mConfig{iConfig} {
     configureMotor();
+    resetHeight(mConfig.kStartingHeight);
+  }
+
+  StanElevator(StanMotor& iMotor, const ElevatorConfig& iConfig)
+      : mMotor{&iMotor}, mOwnsMotor{false}, mConfig{iConfig} {
+    configureMotor();
+    resetHeight(mConfig.kStartingHeight);
   }
 
   StanElevator(int iCanId, MotorType iType, const ElevatorConfig& iConfig, std::string_view iCanBus = "rio")
       : mMotor{new StanMotor{iCanId, iType, iCanBus}}, mOwnsMotor{true}, mConfig{iConfig} {
     configureMotor();
+    resetHeight(mConfig.kStartingHeight);
   }
 
   ~StanElevator() override {
@@ -71,16 +80,21 @@ class StanElevator : public frc2::SubsystemBase {
     mConfig.kTolerance = iTolerance;
   }
 
-  void zeroHeight() {
+  void resetHeight(units::length::meter_t iHeight = 0.0_m) {
+    units::angle::turn_t turns{iHeight.value() / mConfig.kMetersPerRotation};
     if (auto* talon = mMotor->getTalonFX()) {
-      talon->SetPosition(0_tr);
+      talon->SetPosition(turns);
     }
 #if STAN_HAS_REV
     else if (auto* encoder = mMotor->getSparkRelativeEncoder()) {
-      encoder->SetPosition(0.0);
+      encoder->SetPosition(turns.value());
     }
 #endif
-    mTargetHeight = 0_m;
+    mTargetHeight = iHeight;
+  }
+
+  void zeroHeight() {
+    resetHeight(0.0_m);
   }
 
   StanMotor* getMotor() {

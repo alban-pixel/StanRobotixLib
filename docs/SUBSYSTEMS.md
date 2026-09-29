@@ -71,13 +71,14 @@ frc2::CommandPtr shootSequence = frc2::cmd::Sequence(
 
 ## 3. StanPivot
 
-`StanPivot` pilote les articulations angulaires (bras, poignets) sujettes à la gravité, avec synchronisation absolue par `CANcoder`.
+`StanPivot` pilote les articulations angulaires (bras, poignets) sujettes à la gravité, avec asservissement direct sur capteur rotor et rapport de réduction mécanique `kGearRatio`.
 
 ### 3.1 Fonctionnalités
-- Régulation de position à 1 kHz sur le capteur interne du moteur.
-- Synchronisation absolue au démarrage via `KrakenSync`.
+- Régulation de position à 1 kHz sur le capteur interne du moteur (`RotorSensor`).
+- Réduction mécanique intégrée (`kGearRatio`).
 - Feedforward gravitationnel (`Arm_Cosine` via `kG`).
 - Butées logicielles (*soft limits*) appliquées au contrôleur.
+- Recalage manuel ou automatique de position (`resetPosition()`, `zeroPositionCommand()`).
 
 ### 3.2 Exemple
 ```cpp
@@ -93,7 +94,7 @@ stan::PivotConfig armConfig{
     .kG = 0.35,
     .kContinuousWrap = false};
 
-stan::StanPivot armPivot{CANid::kArmMotor, stan::MotorType::kTalonFX, CANid::kArmCANcoder, armConfig};
+stan::StanPivot armPivot{CANid::kArmMotor, stan::MotorType::kTalonFX, armConfig};
 
 // Commandes de positionnement
 mDriverController.bindPress(mDriverController.a(), armPivot.goToAngle(0_deg));

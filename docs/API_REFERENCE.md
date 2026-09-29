@@ -89,22 +89,26 @@ Sous-système pour volants d'inertie et lanceurs.
 - `frc2::CommandPtr stopCommand()` : Commande d'arrêt.
 
 ### 2.3 `class stan::StanPivot`
-Sous-système pour articulations angulaires (bras, poignets).
+Sous-système pour articulations angulaires (bras, poignets) avec asservissement direct sur capteur rotor et réduction mécanique.
 
-- `StanPivot(StanMotor* iMotor, ctre::phoenix6::hardware::CANcoder* iEncoder, const PivotConfig& iConfig)`
-- `StanPivot(int iMotorCanId, MotorType iType, int iEncoderCanId, const PivotConfig& iConfig)`
+- `StanPivot(StanMotor* iMotor, const PivotConfig& iConfig)`
+- `StanPivot(StanMotor& iMotor, const PivotConfig& iConfig)`
+- `StanPivot(int iCanId, MotorType iType, const PivotConfig& iConfig, std::string_view iCanBus = "rio")`
 - `void setTargetAngle(units::angle::degree_t iAngle)` : Consigne angulaire.
 - `units::angle::degree_t getAngle() const` : Angle mesuré.
 - `units::angle::degree_t getTargetAngle() const` : Angle cible.
 - `bool atTargetAngle() const` : Vérifie l'atteinte de la consigne.
-- `bool syncEncoder()` : Déclenche manuellement la synchronisation `KrakenSync`.
+- `void resetPosition(units::angle::degree_t iAngle = 0_deg)` : Réinitialise l'angle mécanique actuel.
+- `void zeroPosition()` : Recalage à 0°.
 - `frc2::CommandPtr goToAngle(units::angle::degree_t iAngle)` : Commande de positionnement.
-- `frc2::CommandPtr syncEncoderCommand()` : Commande de recalage absolu.
+- `frc2::CommandPtr holdAngle()` : Maintien de l'angle courant.
+- `frc2::CommandPtr zeroPositionCommand(units::angle::degree_t iAngle = 0_deg)` : Commande de recalage d'angle.
 
 ### 2.4 `class stan::StanElevator`
 Sous-système pour ascenseurs linéaires.
 
 - `StanElevator(StanMotor* iMotor, const ElevatorConfig& iConfig)`
+- `StanElevator(StanMotor& iMotor, const ElevatorConfig& iConfig)`
 - `StanElevator(int iCanId, MotorType iType, const ElevatorConfig& iConfig)`
 - `void setTargetHeight(units::length::meter_t iHeight)` : Consigne de hauteur linéaire.
 - `units::length::meter_t getHeight() const` : Hauteur mesurée.

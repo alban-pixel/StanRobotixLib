@@ -65,7 +65,7 @@ Sur les moteurs Talon FX (Kraken X60), l'asservissement haute fréquence repose 
 3. Le régulateur Slot 0 tourne ensuite à 1 kHz sur le capteur interne en appliquant le ratio de réduction mécanique configuré.
 
 ```cpp
-stan::KrakenSync::sync(mPivotMotor->getTalonFX(), mPivotCANcoder, 250_ms);
+stan::KrakenSync::sync(mSteerMotor->getTalonFX(), mSteerCANcoder, 250_ms);
 ```
 
 ---

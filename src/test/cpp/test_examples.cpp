@@ -40,6 +40,28 @@ TEST(SubsystemExamplesTest, SubPivotArmCommandsWork) {
   EXPECT_TRUE(cmdHold.get() != nullptr);
 }
 
+TEST(SubsystemExamplesTest, StanPivotResetAndZeroCommandsWork) {
+  stan::PivotConfig config{};
+  stan::StanPivot pivot{25, stan::MotorType::kTalonFX, config};
+  pivot.resetPosition(10_deg);
+  EXPECT_EQ(pivot.getTargetAngle(), 10_deg);
+  pivot.zeroPosition();
+  EXPECT_EQ(pivot.getTargetAngle(), 0_deg);
+  auto cmdZero = pivot.zeroPositionCommand(45_deg);
+  EXPECT_TRUE(cmdZero.get() != nullptr);
+}
+
+TEST(SubsystemExamplesTest, StanPivotWithStanMotorConstructors) {
+  stan::StanMotor motor{26, stan::MotorType::kTalonFX};
+  stan::PivotConfig config{.kStartingAngle = 15_deg};
+
+  stan::StanPivot pivotPtr{&motor, config};
+  EXPECT_EQ(pivotPtr.getTargetAngle(), 15_deg);
+
+  stan::StanPivot pivotRef{motor, config};
+  EXPECT_EQ(pivotRef.getTargetAngle(), 15_deg);
+}
+
 TEST(SubsystemExamplesTest, SubElevatorCommandsWork) {
   SubElevator elevator;
   auto cmdGround = elevator.toGround();

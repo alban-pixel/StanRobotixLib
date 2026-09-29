@@ -100,7 +100,7 @@ stan::PivotConfig config{
     .kP = 40.0,
     .kG = 0.3};
 
-stan::StanPivot pivot{CANid::kPivotMotor, stan::MotorType::kTalonFX, CANid::kPivotEncoder, config};
+stan::StanPivot pivot{CANid::kPivotMotor, stan::MotorType::kTalonFX, config};
 
 // Calcul direct de feedforward gravitationnel
 auto ff = stan::StanFeedforward::Arm(0.1_V, 0.4_V, 0.05);
@@ -149,7 +149,7 @@ Le dossier [`examples/`](examples/) contient des sous-systèmes modulaires au fo
 |---|---|---|---|
 | **01** | [`01_roller_intake/`](examples/01_roller_intake/) | Intake / Rouleaux convoyeur | `SubIntake.hpp` / `SubIntake.cpp` |
 | **02** | [`02_flywheel_shooter/`](examples/02_flywheel_shooter/) | Lanceur asservi en vitesse à 1 kHz | `SubShooter.hpp` / `SubShooter.cpp` |
-| **03** | [`03_pivot_arm/`](examples/03_pivot_arm/) | Bras articulé angulaire avec CANcoder | `SubPivotArm.hpp` / `SubPivotArm.cpp` |
+| **03** | [`03_pivot_arm/`](examples/03_pivot_arm/) | Bras articulé angulaire asservi | `SubPivotArm.hpp` / `SubPivotArm.cpp` |
 | **04** | [`04_elevator/`](examples/04_elevator/) | Ascenseur vertical linéaire métrique | `SubElevator.hpp` / `SubElevator.cpp` |
 | **05** | [`05_swerve_drive/`](examples/05_swerve_drive/) | Propulsion swerve 4 modules & X-lock | `SubDrivetrain.hpp` / `SubDrivetrain.cpp` |
 | **06** | [`06_robot_container/`](examples/06_robot_container/) | Orchestration robot & liaisons manette | `RobotContainer.hpp` / `RobotContainer.cpp` |

@@ -13,7 +13,7 @@ SubPivotArm::SubPivotArm() {
       .kG = 0.3,
       .kV = 0.0};
 
-  mPivot = new stan::StanPivot{20, stan::MotorType::kTalonFX, 21, config};
+  mPivot = new stan::StanPivot{20, stan::MotorType::kTalonFX, config};
 }
 
 SubPivotArm::~SubPivotArm() {
