@@ -93,7 +93,6 @@ Sous-système pour articulations angulaires (bras, poignets) avec asservissement
 
 - `StanPivot(StanMotor* iMotor, const PivotConfig& iConfig)`
 - `StanPivot(StanMotor& iMotor, const PivotConfig& iConfig)`
-- `StanPivot(int iCanId, MotorType iType, const PivotConfig& iConfig, std::string_view iCanBus = "rio")`
 - `void setTargetAngle(units::angle::degree_t iAngle)` : Consigne angulaire.
 - `units::angle::degree_t getAngle() const` : Angle mesuré.
 - `units::angle::degree_t getTargetAngle() const` : Angle cible.

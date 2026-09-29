@@ -82,6 +82,7 @@ frc2::CommandPtr shootSequence = frc2::cmd::Sequence(
 
 ### 3.2 Exemple
 ```cpp
+#include <stan/StanMotor.h>
 #include <stan/StanPivot.h>
 
 stan::PivotConfig armConfig{
@@ -94,7 +95,8 @@ stan::PivotConfig armConfig{
     .kG = 0.35,
     .kContinuousWrap = false};
 
-stan::StanPivot armPivot{CANid::kArmMotor, stan::MotorType::kTalonFX, armConfig};
+stan::StanMotor armMotor{CANid::kArmMotor, stan::MotorType::kTalonFX};
+stan::StanPivot armPivot{armMotor, armConfig};
 
 // Commandes de positionnement
 mDriverController.bindPress(mDriverController.a(), armPivot.goToAngle(0_deg));

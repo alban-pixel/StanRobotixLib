@@ -3,6 +3,7 @@
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
 #include <units/angle.h>
+#include <stan/StanMotor.h>
 #include <stan/StanPivot.h>
 
 class SubPivotArm : public frc2::SubsystemBase {
@@ -18,5 +19,6 @@ class SubPivotArm : public frc2::SubsystemBase {
   units::angle::degree_t getAngle() const;
 
  private:
+  stan::StanMotor* mMotor;
   stan::StanPivot* mPivot;
 };

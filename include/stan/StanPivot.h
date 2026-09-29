@@ -31,30 +31,18 @@ struct PivotConfig {
 class StanPivot : public frc2::SubsystemBase {
  public:
   StanPivot(StanMotor* iMotor, const PivotConfig& iConfig)
-      : mMotor{iMotor}, mOwnsMotor{false}, mConfig{iConfig} {
+      : mMotor{iMotor}, mConfig{iConfig} {
     configureMotor();
     resetPosition(mConfig.kStartingAngle);
   }
 
   StanPivot(StanMotor& iMotor, const PivotConfig& iConfig)
-      : mMotor{&iMotor}, mOwnsMotor{false}, mConfig{iConfig} {
+      : mMotor{&iMotor}, mConfig{iConfig} {
     configureMotor();
     resetPosition(mConfig.kStartingAngle);
   }
 
-  StanPivot(int iCanId, MotorType iType, const PivotConfig& iConfig, std::string_view iCanBus = "rio")
-      : mMotor{new StanMotor{iCanId, iType, iCanBus}},
-        mOwnsMotor{true},
-        mConfig{iConfig} {
-    configureMotor();
-    resetPosition(mConfig.kStartingAngle);
-  }
-
-  ~StanPivot() override {
-    if (mOwnsMotor) {
-      delete mMotor;
-    }
-  }
+  ~StanPivot() override = default;
 
   void setTargetAngle(units::angle::degree_t iAngle) {
     units::angle::degree_t target = std::clamp(iAngle, mConfig.kMinAngle, mConfig.kMaxAngle);
@@ -177,7 +165,6 @@ class StanPivot : public frc2::SubsystemBase {
   }
 
   StanMotor* mMotor{nullptr};
-  bool mOwnsMotor{false};
   PivotConfig mConfig;
   units::angle::degree_t mTargetAngle{0_deg};
 };

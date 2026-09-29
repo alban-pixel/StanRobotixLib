@@ -13,11 +13,13 @@ SubPivotArm::SubPivotArm() {
       .kG = 0.3,
       .kV = 0.0};
 
-  mPivot = new stan::StanPivot{20, stan::MotorType::kTalonFX, config};
+  mMotor = new stan::StanMotor{20, stan::MotorType::kTalonFX};
+  mPivot = new stan::StanPivot{mMotor, config};
 }
 
 SubPivotArm::~SubPivotArm() {
   delete mPivot;
+  delete mMotor;
 }
 
 frc2::CommandPtr SubPivotArm::toIntakePosition() {

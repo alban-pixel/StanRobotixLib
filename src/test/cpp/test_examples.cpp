@@ -42,7 +42,8 @@ TEST(SubsystemExamplesTest, SubPivotArmCommandsWork) {
 
 TEST(SubsystemExamplesTest, StanPivotResetAndZeroCommandsWork) {
   stan::PivotConfig config{};
-  stan::StanPivot pivot{25, stan::MotorType::kTalonFX, config};
+  stan::StanMotor motor{25, stan::MotorType::kTalonFX};
+  stan::StanPivot pivot{motor, config};
   pivot.resetPosition(10_deg);
   EXPECT_EQ(pivot.getTargetAngle(), 10_deg);
   pivot.zeroPosition();

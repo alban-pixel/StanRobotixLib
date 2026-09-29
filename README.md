@@ -91,6 +91,7 @@ motor.setVelocity(50_tps); // Régulation onboard 1 kHz
 ### 2. Bras / Pivot avec Feedforward
 ```cpp
 #include <stan/StanFeedforward.h>
+#include <stan/StanMotor.h>
 #include <stan/StanPivot.h>
 
 stan::PivotConfig config{
@@ -100,7 +101,8 @@ stan::PivotConfig config{
     .kP = 40.0,
     .kG = 0.3};
 
-stan::StanPivot pivot{CANid::kPivotMotor, stan::MotorType::kTalonFX, config};
+stan::StanMotor armMotor{CANid::kPivotMotor, stan::MotorType::kTalonFX};
+stan::StanPivot pivot{armMotor, config};
 
 // Calcul direct de feedforward gravitationnel
 auto ff = stan::StanFeedforward::Arm(0.1_V, 0.4_V, 0.05);
