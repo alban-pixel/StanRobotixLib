@@ -4,24 +4,29 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-echo "=== Installation de StanRobotixLib Vendordep ==="
+echo "=== Installation de StanRobotixLib Vendordep (macOS / Linux) ==="
 
 # 1. Compilation des headers et publication Maven Local
 echo "-> Génération des headers et publication Maven..."
 ./gradlew headersZip publishToMavenLocal publish
 
-# 2. Installation dans le cache WPILib Maven local (~/wpilib/2026/maven)
+# 2. Installation dans le cache WPILib Maven local
 WPILIB_MAVEN_DIR="$HOME/wpilib/2026/maven/com/stanrobotix/StanRobotixLib-cpp/1.0.0"
 mkdir -p "$WPILIB_MAVEN_DIR"
 cp -f build/libs/StanRobotixLib-cpp-1.0.0-headers.zip "$WPILIB_MAVEN_DIR/"
 cp -f build/publications/stanRobotixLib/pom-default.xml "$WPILIB_MAVEN_DIR/StanRobotixLib-cpp-1.0.0.pom"
 echo "-> Installé dans $WPILIB_MAVEN_DIR"
 
+if [ -d "/Users/Shared/wpilib/2026/maven" ]; then
+  mkdir -p "/Users/Shared/wpilib/2026/maven/com/stanrobotix/StanRobotixLib-cpp/1.0.0"
+  cp -f build/libs/StanRobotixLib-cpp-1.0.0-headers.zip "/Users/Shared/wpilib/2026/maven/com/stanrobotix/StanRobotixLib-cpp/1.0.0/"
+  cp -f build/publications/stanRobotixLib/pom-default.xml "/Users/Shared/wpilib/2026/maven/com/stanrobotix/StanRobotixLib-cpp/1.0.0/StanRobotixLib-cpp-1.0.0.pom"
+fi
+
 # 3. Installation dans un projet robot cible
 TARGET_PROJECT="$1"
 
 if [ -z "$TARGET_PROJECT" ]; then
-  # Recherche automatique de projets frères connus
   if [ -d "$SCRIPT_DIR/../2026-StanRobotix-OffSeason/Mid-Robot" ]; then
     TARGET_PROJECT="$SCRIPT_DIR/../2026-StanRobotix-OffSeason/Mid-Robot"
   elif [ -d "$SCRIPT_DIR/../2026-StanRobotix-FRC" ]; then
@@ -46,7 +51,7 @@ if [ -n "$TARGET_PROJECT" ] && [ -d "$TARGET_PROJECT" ]; then
   fi
 else
   echo ""
-  echo "Pour installer le fichier vendordep dans un projet robot spécifique, lancez :"
+  echo "Pour installer le fichier vendordep dans un projet robot spécifique :"
   echo "  ./install_vendordep.sh /chemin/vers/votre/projet"
 fi
 

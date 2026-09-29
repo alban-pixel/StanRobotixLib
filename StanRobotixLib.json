@@ -5,9 +5,9 @@
   "uuid": "66226622-2026-4c7b-b389-stanrobotix01",
   "frcYear": "2026",
   "mavenUrls": [
-    "https://maven.stanrobotix.com/release"
+    "https://raw.githubusercontent.com/alban-pixel/StanRobotixLib/main/maven"
   ],
-  "jsonUrl": "https://software-metadata.stanrobotix.com/StanRobotixLib-2026.json",
+  "jsonUrl": "https://raw.githubusercontent.com/alban-pixel/StanRobotixLib/main/StanRobotixLib.json",
   "javaDependencies": [],
   "jniDependencies": [],
   "cppDependencies": [

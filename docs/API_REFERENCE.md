@@ -150,7 +150,17 @@ Synchronisation dynamique de gains avec NetworkTables 4 :
 - `void periodic()` : Écoute les topics `/Tuning/{TableName}/*` et met à jour le variateur en cas de modification.
 - `double getP() const`, `double getI() const`, `double getD() const`, `double getS() const`, `double getV() const`
 
-### 4.2 `namespace stan::TuningPresets`
+### 4.2 `class stan::StanFeedforward`
+Calculs de feedforward fortement typés pour actionneurs et mécanismes :
+- `static StanFeedforward Simple(units::voltage::volt_t iKs, double iKv, double iKa = 0.0)`
+- `static StanFeedforward Arm(units::voltage::volt_t iKs, units::voltage::volt_t iKg, double iKv, double iKa = 0.0)`
+- `static StanFeedforward Elevator(units::voltage::volt_t iKs, units::voltage::volt_t iKg, double iKv, double iKa = 0.0)`
+- `units::voltage::volt_t calculate(units::angular_velocity::turns_per_second_t iVelocity, units::angular_acceleration::turns_per_second_squared_t iAcceleration = 0_tr_per_s_sq) const`
+- `units::voltage::volt_t calculate(units::velocity::meters_per_second_t iVelocity, units::acceleration::meters_per_second_squared_t iAcceleration = 0_mps_sq) const`
+- `units::voltage::volt_t calculate(units::angle::degree_t iAngle, units::angular_velocity::turns_per_second_t iVelocity, units::angular_acceleration::turns_per_second_squared_t iAcceleration = 0_tr_per_s_sq) const`
+- `void setGains(units::voltage::volt_t iKs, double iKv, double iKa = 0.0, units::voltage::volt_t iKg = 0_V)`
+
+### 4.3 `namespace stan::TuningPresets`
 Valeurs d'initialisation recommandées :
 - `kFlywheelBaseline` : Gains types pour lanceur à volant d'inertie.
 - `kPivotBaseline` : Gains types pour articulation angulaire avec compensation de gravité.

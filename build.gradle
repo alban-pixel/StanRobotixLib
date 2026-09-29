@@ -51,6 +51,10 @@ publishing {
             name = 'buildRepo'
             url = layout.buildDirectory.dir('repos/releases')
         }
+        maven {
+            name = 'gitMaven'
+            url = layout.projectDirectory.dir('maven')
+        }
     }
 }
 

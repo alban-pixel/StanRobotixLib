@@ -17,6 +17,7 @@ bin/
 *.jar
 *.tar.gz
 !gradle/wrapper/gradle-wrapper.jar
+!maven/**
 
 # IDE & OS
 .vscode/
