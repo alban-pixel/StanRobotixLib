@@ -2,6 +2,7 @@
 build/
 .gradle/
 bin/
+ctre_sim/
 *.class
 
 # C++ Build artifacts

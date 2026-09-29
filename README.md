@@ -124,7 +124,7 @@ driver.bindPress(driver.B(), shooter.spinVelocity(80_tps));
 
 ## Tests Unitaires
 
-StanRobotixLib comprend une suite exhaustive de **237 tests unitaires** vérifiant le filtrage des deadbands, les conversions d'unités, la cinématique, les réjections de vision MegaTag2 et les calculs de feedforward :
+StanRobotixLib comprend une suite exhaustive de **245 tests unitaires** vérifiant le filtrage des deadbands, les conversions d'unités, la cinématique, les réjections de vision MegaTag2, les calculs de feedforward ainsi que la compilation et l'exécution de tous les exemples :
 
 ```bash
 # macOS / Linux
@@ -133,6 +133,23 @@ StanRobotixLib comprend une suite exhaustive de **237 tests unitaires** vérifia
 # Windows
 gradlew.bat test
 ```
+
+---
+
+## Dossier d'Exemples Complets
+
+Le dossier [`examples/`](examples/) contient 8 architectures de code complètes, prêtes à l'emploi et testées pour vos sous-systèmes :
+
+| Exemple | Fichier | Description |
+|---|---|---|
+| **01** | [`01_MotorAndSyncExample.h`](examples/01_MotorAndSyncExample.h) | Contrôle direct de moteur et synchronisation absolue Kraken/CANcoder en 1 ligne. |
+| **02** | [`02_RollerAndShooterExample.h`](examples/02_RollerAndShooterExample.h) | Intake et volant d'inertie asservi à 1 kHz avec tir conditionnel automatique (`atDesiredVelocity`). |
+| **03** | [`03_PivotArmExample.h`](examples/03_PivotArmExample.h) | Bras angulaire avec soft limits, synchronisation d'encodeur absolu et feedforward de gravité $\cos(\theta)$. |
+| **04** | [`04_ElevatorExample.h`](examples/04_ElevatorExample.h) | Ascenseur vertical avec soft limits, contrôle métrique et compensation statique de gravité. |
+| **05** | [`05_SwerveDrivetrainExample.h`](examples/05_SwerveDrivetrainExample.h) | Châssis swerve 4 modules configuré avec `StanSwerveBuilder`, odométrie, vision et verrouillage défensif en X. |
+| **06** | [`06_CarDriveExample.h`](examples/06_CarDriveExample.h) | Châssis directionnel type voiture (2 roues directrices avant + différentiel arrière, Mid-Robot). |
+| **07** | [`07_TunablePIDExample.h`](examples/07_TunablePIDExample.h) | Live-tuning dynamique des gains PID et feedforward via NetworkTables 4 sans redéploiement. |
+| **08** | [`08_FullRobotContainerExample.h`](examples/08_FullRobotContainerExample.h) | Orchestration complète d'un `RobotContainer` (manette Xbox, swerve, mécanismes et séquence autonome). |
 
 ---
 
@@ -145,3 +162,4 @@ Pour une exploration approfondie de la bibliothèque, consultez les guides du do
 - [**Sous-Systèmes & Mécanismes (`docs/SUBSYSTEMS.md`)**](docs/SUBSYSTEMS.md) : Guide d'implémentation de chaque mécanisme et châssis.
 - [**Référence API (`docs/API_REFERENCE.md`)**](docs/API_REFERENCE.md) : Spécification complète des classes et méthodes.
 - [**Guide de Migration (`docs/MIGRATION_GUIDE.md`)**](docs/MIGRATION_GUIDE.md) : Exemples avant/après pour migrer du code FRC existant.
+- [**Guide des Exemples (`examples/README.md`)**](examples/README.md) : Index et explications détaillées des exemples de code.
